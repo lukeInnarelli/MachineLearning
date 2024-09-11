@@ -24,18 +24,28 @@ def learnRisk():
     inputs_train, inputs_test, targets_train, targets_test = preprocess(datasetInput, datasetTarget)
 
     # puts the dataset into the classifier to train
-    for learning_rate_init in [0.0001, 0.001, 0.01, 0.1]:
-        classifier = MLPClassifier(random_state=0, max_iter=1200, learning_rate_init=learning_rate_init, )
+    i = 0;
+    classes = np.zeros(4);
+    for hidden_layer_sizes in [480, 490, 500, 510]:
+        classifier = MLPClassifier(random_state=0, max_iter=1200, hidden_layer_sizes=hidden_layer_sizes, learning_rate_init= 0.06)
         classifier.fit(inputs_train, targets_train)
         results = classifier.predict(inputs_test)
 
         # one line accuracy of the machine learning
-        print(np.mean(np.equal(results, targets_test)))
+        #print(np.mean(np.equal(results, targets_test)))
         plt.title('Hyperparameter experimentation')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
-        plt.plot(range(len(classifier.loss_curve_)), classifier.loss_curve_, label=f'{learning_rate_init=}')
+        plt.plot(range(len(classifier.loss_curve_)), classifier.loss_curve_, label=f'{hidden_layer_sizes=}')
+        classes[i] = classifier.best_loss_
+        i = i + 1
         # display_confusion_matrix(targets_test, results, plot_title='Test Performance')
+    plt.legend()
+    plt.show()
+    plt.title('Final Loss')
+    plt.xlabel('Experiment number')
+    plt.ylabel('Loss')
+    plt.plot([1,2,3,4],classes)
     plt.legend()
     plt.show()
 
