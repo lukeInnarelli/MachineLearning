@@ -36,7 +36,7 @@ def learnRisk():
 
     # one line accuracy of the machine learning
     print(np.mean(np.equal(results, targets_test)))
-    # display_confusion_matrix(targets_test,results)
+    display_confusion_matrix(targets_test,results)
 
 # preprocessing and making a random test group to pull from
 def preprocess(inputs, targets):
