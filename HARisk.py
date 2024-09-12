@@ -1,27 +1,18 @@
-import csv
-
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 import matplotlib.pyplot as plt
 import numpy as np
 
+def get_data():
+    dataset = np.genfromtxt(
+        'archive/heart.csv', delimiter=',', skip_header=1, dtype=np.float32
+    )
+    return preprocess(dataset[:, :13], dataset[:, 13])
+
 def learnRisk():
-    # gets the dataset
-    dataset2 = open('archive/heart.csv', 'r')
-    o = csv.reader(dataset2)
-    dataset3 = []
-    for dataset2 in o:
-        dataset3.append(dataset2)
-    dataset4 = np.array(dataset3[1:])
-    dataset5 = np.zeros((len(dataset4), len(dataset4[1])))
-    for i in range(0, len(dataset4)):
-        for j in range(len(dataset4[i])):
-            dataset5[i, j] = float(dataset4[i, j])
-    # orders the dataset
-    datasetInput = dataset5[:, :13]
-    datasetTarget = dataset5[:, 13]
-    inputs_train, inputs_test, targets_train, targets_test = preprocess(datasetInput, datasetTarget)
+
+    inputs_train, inputs_test, targets_train, targets_test = get_data()
 
     # puts the dataset into the classifier to train
     i = 0
