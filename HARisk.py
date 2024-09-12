@@ -25,10 +25,10 @@ def learnRisk():
 
     # puts the dataset into the classifier to train
     i = 0
-    tests = np.array([470,475,480,485,490,495,1000])
+    tests = np.array([470, 475, 480, 485, 490, 495, 1000])
     classes = np.zeros(len(tests))
     for hidden_layer_sizes in tests:
-        classifier = MLPClassifier(random_state=0, max_iter=1200, hidden_layer_sizes=hidden_layer_sizes, learning_rate_init= 0.06)
+        classifier = MLPClassifier(random_state=0, max_iter=1200, hidden_layer_sizes=hidden_layer_sizes, learning_rate_init=0.06)
         classifier.fit(inputs_train, targets_train)
         results = classifier.predict(inputs_test)
 
@@ -40,7 +40,7 @@ def learnRisk():
         plt.plot(range(len(classifier.loss_curve_)), classifier.loss_curve_, label=f'{hidden_layer_sizes=}')
         classes[i] = classifier.best_loss_
         i = i + 1
-        #display_confusion_matrix(targets_test, results, plot_title='Test Performance')
+        # display_confusion_matrix(targets_test, results, plot_title='Test Performance')
     plt.legend()
     plt.show()
     plt.title('Final Loss')
@@ -49,7 +49,7 @@ def learnRisk():
     ext = np.zeros(len(tests))
     for x in range(len(tests)):
         ext[x] = x + 1
-    plt.plot(ext,classes)
+    plt.plot(ext, classes)
     plt.legend()
     plt.show()
 
