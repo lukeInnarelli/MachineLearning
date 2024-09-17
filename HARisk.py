@@ -20,22 +20,23 @@ def learnRisk():
     # puts the dataset into the classifier to train
     tests = np.array([470, 475, 480, 485, 490, 495, 1000])
     classes = np.zeros(len(tests))
-    for i, hidden_layer_sizes in enumerate(tests):
-        classifier = MLPClassifier(random_state=0, max_iter=1200, hidden_layer_sizes=hidden_layer_sizes, learning_rate_init=0.06)
+    param = "hidden_layer_sizes"
+    for i, value in enumerate(tests):
+        classifier = MLPClassifier(random_state=0, max_iter=1200, **{param:value})
         classifier.fit(inputs_train, targets_train)
         predictions_train = classifier.predict(inputs_train)
         predictions_test = classifier.predict(inputs_test)
 
         # one line accuracy of the machine learning
-        print(f'\nTrain Accuracy for {hidden_layer_sizes = }: {np.mean(np.equal(predictions_train, targets_train)) * 100:.3f}%')
-        print(f'Test Accuracy for {hidden_layer_sizes = }: {np.mean(np.equal(predictions_test, targets_test)) * 100:.3f}%')
+        print(f'\nTrain Accuracy for {value = }: {np.mean(np.equal(predictions_train, targets_train)) * 100:.3f}%')
+        print(f'Test Accuracy for {value = }: {np.mean(np.equal(predictions_test, targets_test)) * 100:.3f}%')
         plt.title('Hyperparameter experimentation')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
-        plt.plot(range(len(classifier.loss_curve_)), classifier.loss_curve_, label=f'{hidden_layer_sizes=}')
+        plt.plot(range(len(classifier.loss_curve_)), classifier.loss_curve_, label=f'{value=}')
         classes[i] = classifier.best_loss_
-        display_confusion_matrix(targets_train, predictions_train, plot_title=f'Train Performance {hidden_layer_sizes}')
-        display_confusion_matrix(targets_test, predictions_test, plot_title=f'Test Performance {hidden_layer_sizes}')
+        #display_confusion_matrix(targets_train, predictions_train, plot_title=f'Train Performance {hidden_layer_sizes}')
+        #display_confusion_matrix(targets_test, predictions_test, plot_title=f'Test Performance {hidden_layer_sizes}')
     plt.legend()
     PLOT_FOLDER.mkdir(exist_ok=True)
 
