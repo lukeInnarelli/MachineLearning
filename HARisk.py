@@ -14,48 +14,47 @@ def get_data():
     )
     return preprocess(dataset[:, :13], dataset[:, 13])
 
-def learn_risk():
+def learn_risk(argname, argvals):
     inputs_train, inputs_test, targets_train, targets_test = get_data()
 
     # puts the dataset into the classifier to train
-    tests = np.array([380,400,470])
-    classes = np.zeros(len(tests))
-    param = "learning_rate_init"
-    for i, value in enumerate(tests):
-        classifier = MLPClassifier(random_state=0, max_iter=1200, **{param:value},)
+    classes = np.zeros(len(argvals))
+    for i, value in enumerate(argvals):
+        classifier = MLPClassifier(random_state=0, max_iter=1200, **{argname: value},)
         classifier.fit(inputs_train, targets_train)
         predictions_train = classifier.predict(inputs_train)
         predictions_test = classifier.predict(inputs_test)
 
         # one line accuracy of the machine learning
-        print(f'\nTrain Accuracy for {value = }: {np.mean(np.equal(predictions_train, targets_train)) * 100:.3f}%')
-        print(f'Test Accuracy for {value = }: {np.mean(np.equal(predictions_test, targets_test)) * 100:.3f}%')
+        print(f'\nTrain Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_train, targets_train)) * 100:.3f}%')
+        print(f'Test Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_test, targets_test)) * 100:.3f}%')
         plt.title('Hyperparameter experimentation')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.plot(range(len(classifier.loss_curve_)), classifier.loss_curve_, label=f'{value=}')
+        plt.close()
         classes[i] = classifier.best_loss_
-        #display_confusion_matrix(targets_train, predictions_train, plot_title=f'Train Performance {hidden_layer_sizes}')
-        #display_confusion_matrix(targets_test, predictions_test, plot_title=f'Test Performance {hidden_layer_sizes}')
-    plot(tests, classes, param)
+        display_confusion_matrix(targets_train, predictions_train, plot_title=f'{argname} Train Performance')
+        display_confusion_matrix(targets_test, predictions_test, plot_title=f'{argname} Test Performance')
+    plot(argvals, classes, argname)
 
-def plot(tests, classes, param):
+def plot(argvals, classes, argname):
     plt.legend()
     PLOT_FOLDER.mkdir(exist_ok=True)
 
-    if param == "learning_rate_init":
+    if argname == "learning_rate_init":
         plt.xscale("log")
 
-    plt.savefig(PLOT_FOLDER / 'epoch_vs_loss.png')
+    plt.savefig(PLOT_FOLDER / f'{argname}_epoch_vs_loss.png')
     plt.close()
     plt.title('Final Loss')
     plt.xlabel('Experiment number')
     plt.ylabel('Loss')
-    ext = np.zeros(len(tests))
-    for x in range(len(tests)):
+    ext = np.zeros(len(argvals))
+    for x in range(len(argvals)):
         ext[x] = x + 1
     plt.plot(ext, classes)
-    plt.savefig(PLOT_FOLDER / 'hidden_layer_sizes_vs_best_loss.png')
+    plt.savefig(PLOT_FOLDER / f'{argname}_vs_best_loss.png')
     plt.close()
 
 # preprocessing and making a random test group to pull from
@@ -77,4 +76,5 @@ def display_confusion_matrix(target, predictions, labels=['Low Risk', 'High Risk
     plt.close()
 
 if __name__ == '__main__':
-    learn_risk()
+    learn_risk('learning_rate_init', np.array([380, 400, 470]))
+    learn_risk('hidden_layer_sizes', [(100,) * i for i in range(1, 5)])
