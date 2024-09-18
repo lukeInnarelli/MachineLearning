@@ -18,27 +18,28 @@ def learn_risk(argname, argvals):
     inputs_train, inputs_test, targets_train, targets_test = get_data()
 
     # puts the dataset into the classifier to train
-    classes = np.zeros(len(argvals))
+    models = []
     for i, value in enumerate(argvals):
         classifier = MLPClassifier(random_state=0, max_iter=1200, **{argname: value},)
         classifier.fit(inputs_train, targets_train)
         predictions_train = classifier.predict(inputs_train)
         predictions_test = classifier.predict(inputs_test)
 
+        display_confusion_matrix(targets_train, predictions_train, plot_title=f'{argname} Train Performance')
+        display_confusion_matrix(targets_test, predictions_test, plot_title=f'{argname} Test Performance')
         # one line accuracy of the machine learning
         print(f'\nTrain Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_train, targets_train)) * 100:.3f}%')
         print(f'Test Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_test, targets_test)) * 100:.3f}%')
+        models.append(classifier)
+
+    plot(argvals, models, argname, targets_train, predictions_train, targets_test, predictions_test)
+
+def plot(argvals, models, argname):
+    for value, classifier in zip(argvals, models):
         plt.title('Hyperparameter experimentation')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.plot(range(len(classifier.loss_curve_)), classifier.loss_curve_, label=f'{value=}')
-        plt.close()
-        classes[i] = classifier.best_loss_
-        display_confusion_matrix(targets_train, predictions_train, plot_title=f'{argname} Train Performance')
-        display_confusion_matrix(targets_test, predictions_test, plot_title=f'{argname} Test Performance')
-    plot(argvals, classes, argname)
-
-def plot(argvals, classes, argname):
     plt.legend()
     PLOT_FOLDER.mkdir(exist_ok=True)
 
@@ -53,7 +54,7 @@ def plot(argvals, classes, argname):
     ext = np.zeros(len(argvals))
     for x in range(len(argvals)):
         ext[x] = x + 1
-    plt.plot(ext, classes)
+    plt.plot(ext, [m.best_loss_ for m in models])
     plt.savefig(PLOT_FOLDER / f'{argname}_vs_best_loss.png')
     plt.close()
 
