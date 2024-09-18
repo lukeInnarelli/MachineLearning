@@ -14,15 +14,15 @@ def get_data():
     )
     return preprocess(dataset[:, :13], dataset[:, 13])
 
-def learnRisk():
+def learn_risk():
     inputs_train, inputs_test, targets_train, targets_test = get_data()
 
     # puts the dataset into the classifier to train
-    tests = np.array([470, 475, 480, 485, 490, 495, 1000])
+    tests = np.array([380,400,470])
     classes = np.zeros(len(tests))
-    param = "hidden_layer_sizes"
+    param = "learning_rate_init"
     for i, value in enumerate(tests):
-        classifier = MLPClassifier(random_state=0, max_iter=1200, **{param:value})
+        classifier = MLPClassifier(random_state=0, max_iter=1200, **{param:value},)
         classifier.fit(inputs_train, targets_train)
         predictions_train = classifier.predict(inputs_train)
         predictions_test = classifier.predict(inputs_test)
@@ -37,8 +37,14 @@ def learnRisk():
         classes[i] = classifier.best_loss_
         #display_confusion_matrix(targets_train, predictions_train, plot_title=f'Train Performance {hidden_layer_sizes}')
         #display_confusion_matrix(targets_test, predictions_test, plot_title=f'Test Performance {hidden_layer_sizes}')
+    plot(tests, classes, param)
+
+def plot(tests, classes, param):
     plt.legend()
     PLOT_FOLDER.mkdir(exist_ok=True)
+
+    if param == "learning_rate_init":
+        plt.xscale("log")
 
     plt.savefig(PLOT_FOLDER / 'epoch_vs_loss.png')
     plt.close()
@@ -71,4 +77,4 @@ def display_confusion_matrix(target, predictions, labels=['Low Risk', 'High Risk
     plt.close()
 
 if __name__ == '__main__':
-    learnRisk()
+    learn_risk()
