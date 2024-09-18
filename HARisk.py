@@ -18,9 +18,9 @@ def learn_risk():
     inputs_train, inputs_test, targets_train, targets_test = get_data()
 
     # puts the dataset into the classifier to train
-    tests = np.array([380,400,470])
+    tests = np.array([380, 400, 470])
     classes = np.zeros(len(tests))
-    param = "learning_rate_init"
+    param = "hidden_layer_sizes"
     for i, value in enumerate(tests):
         classifier = MLPClassifier(random_state=0, max_iter=1200, **{param:value},)
         classifier.fit(inputs_train, targets_train)
