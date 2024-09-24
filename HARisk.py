@@ -16,9 +16,8 @@ def get_data():
     return preprocess(dataset[:, :13], dataset[:, 13])
 
 def learn_risk(argname, argvals):
-    dataset = np.genfromtxt(
-        'archive/heart.csv', delimiter=',', dtype=str
-    )
+    with open('archive/heart.csv') as data_file:
+        colnames = next(data_file).strip().split(',')
     inputs_train, inputs_test, targets_train, targets_test = get_data()
 
     # puts the dataset into the classifier to train
@@ -50,13 +49,13 @@ def learn_risk(argname, argvals):
     strings = []
     for i in per.importances_mean.argsort()[::-1]:
         print(
-            f"{dataset[0,i]:<8}"
+            f"{colnames[i]:<8}"
             f"{per.importances_mean[i]:.3f}"
             f" +/- {per.importances_std[i]:.3f}"
         )
         box_array[0, i] = per.importances_mean[i]
         box_array[1, i] = per.importances_std[i]
-        strings.append(dataset[0, i])
+        strings.append(colnames[i])
     plt.boxplot(box_array)
     plt.show()
 
