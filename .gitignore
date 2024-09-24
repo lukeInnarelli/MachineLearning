@@ -5,3 +5,4 @@
 archive
 *.png
 archive/Brain.py
+*.pkl
