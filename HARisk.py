@@ -47,10 +47,17 @@ def learn_risk(argname, argvals):
     #print(inputs_test)
     print(per_predictions)
     per = permutation_importance(per_models[1], inputs_test, targets_test, n_repeats=30, random_state=0)
+    box_array = np.zeros((2,13))
+    strings = []
     for i in per.importances_mean.argsort()[::-1]:
         print(f"{dataset[0,i]:<8}"
                 f"{per.importances_mean[i]:.3f}"
                 f" +/- {per.importances_std[i]:.3f}")
+        box_array[0,i] = per.importances_mean[i]
+        box_array[1,i] = per.importances_std[i]
+        strings.append(dataset[0,i])
+    plt.boxplot(box_array)
+    plt.show()
 
 
 def plot(argvals, models, argname):
@@ -96,5 +103,5 @@ def display_confusion_matrix(target, predictions, labels=['Low Risk', 'High Risk
     plt.close()
 
 if __name__ == '__main__':
-    learn_risk('learning_rate_init', np.array([380, 400, 470]))
+    #learn_risk('learning_rate_init', np.array([380, 400, 470]))
     learn_risk('hidden_layer_sizes', [(100,) * i for i in range(1, 5)])
