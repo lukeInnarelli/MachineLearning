@@ -1,5 +1,4 @@
 from pathlib import Path
-from random import random
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
@@ -18,9 +17,9 @@ def get_data():
 
 def learn_risk(argname, argvals):
     dataset = np.genfromtxt(
-        'archive/heart.csv', delimiter=',', dtype= str
+        'archive/heart.csv', delimiter=',', dtype=str
     )
-    inputs_train, inputs_test, targets_train, targets_test= get_data()
+    inputs_train, inputs_test, targets_train, targets_test = get_data()
 
     # puts the dataset into the classifier to train
     models = []
@@ -35,27 +34,29 @@ def learn_risk(argname, argvals):
         display_confusion_matrix(targets_train, predictions_train, plot_title=f'{argname} Train Performance')
         display_confusion_matrix(targets_test, predictions_test, plot_title=f'{argname} Test Performance')
         # one line accuracy of the machine learning
-        #print(f'\nTrain Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_train, targets_train)) * 100:.3f}%')
-        #print(f'Test Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_test, targets_test)) * 100:.3f}%')
+        # print(f'\nTrain Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_train, targets_train)) * 100:.3f}%')
+        # print(f'Test Accuracy for {argname} with {value = }: {np.mean(np.equal(predictions_test, targets_test)) * 100:.3f}%')
         models.append(classifier)
 
         per_models.append(classifier)
         per_predictions.append(predictions_test)
 
-    #plot(argvals, models, argname, targets_train, predictions_train, targets_test, predictions_test)
+    # plot(argvals, models, argname, targets_train, predictions_train, targets_test, predictions_test)
 
-    #print(inputs_test)
+    # print(inputs_test)
     print(per_predictions)
     per = permutation_importance(per_models[1], inputs_test, targets_test, n_repeats=30, random_state=0)
-    box_array = np.zeros((2,13))
+    box_array = np.zeros((2, 13))
     strings = []
     for i in per.importances_mean.argsort()[::-1]:
-        print(f"{dataset[0,i]:<8}"
-                f"{per.importances_mean[i]:.3f}"
-                f" +/- {per.importances_std[i]:.3f}")
-        box_array[0,i] = per.importances_mean[i]
-        box_array[1,i] = per.importances_std[i]
-        strings.append(dataset[0,i])
+        print(
+            f"{dataset[0,i]:<8}"
+            f"{per.importances_mean[i]:.3f}"
+            f" +/- {per.importances_std[i]:.3f}"
+        )
+        box_array[0, i] = per.importances_mean[i]
+        box_array[1, i] = per.importances_std[i]
+        strings.append(dataset[0, i])
     plt.boxplot(box_array)
     plt.show()
 
@@ -103,5 +104,5 @@ def display_confusion_matrix(target, predictions, labels=['Low Risk', 'High Risk
     plt.close()
 
 if __name__ == '__main__':
-    #learn_risk('learning_rate_init', np.array([380, 400, 470]))
+    # learn_risk('learning_rate_init', np.array([380, 400, 470]))
     learn_risk('hidden_layer_sizes', [(100,) * i for i in range(1, 5)])
