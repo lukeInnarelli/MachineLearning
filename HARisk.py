@@ -45,7 +45,7 @@ def learn_risk(argname, argvals):
     #plot(argvals, models, argname, targets_train, predictions_train, targets_test, predictions_test)
 
     #print(inputs_test)
-    #print(targets_test)
+    print(per_predictions)
     per = permutation_importance(per_models[1], inputs_test, targets_test, n_repeats=30, random_state=0)
     for i in per.importances_mean.argsort()[::-1]:
         print(f"{dataset[0,i]:<8}"
