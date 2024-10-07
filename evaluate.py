@@ -8,7 +8,7 @@ from experiment import get_data
 
 def main(argname):
     with open('archive/heart.csv', mode='r') as data_file:
-        colnames = next(data_file).strip().split(',')
+        colnames = np.array(next(data_file).strip().split(',')[:-1])
     with open(f'best_model_{argname}.pkl', mode='rb') as model_file:
         model = pickle.load(model_file)
 
@@ -16,8 +16,8 @@ def main(argname):
 
     per = permutation_importance(model, inputs_test, targets_test, n_repeats=30, random_state=0)
     box_array = np.zeros((2, 13))
-    strings = []
-    for i in per.importances_mean.argsorgitt()[::-1]:
+    idxes = per.importances_mean.argsort()[::-1]
+    for i in idxes:
         print(
             f"{colnames[i]:<8}"
             f"{per.importances_mean[i]:.3f}"
@@ -25,8 +25,7 @@ def main(argname):
         )
         box_array[0, i] = per.importances_mean[i]
         box_array[1, i] = per.importances_std[i]
-        strings.append(colnames[i])
-    plt.boxplot(box_array)
+    plt.boxplot(box_array, tick_labels= colnames)
     plt.show()
 
 if __name__ == '__main__':
