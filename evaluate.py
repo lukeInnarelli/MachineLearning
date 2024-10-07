@@ -17,7 +17,7 @@ def main(argname):
     per = permutation_importance(model, inputs_test, targets_test, n_repeats=30, random_state=0)
     box_array = np.zeros((2, 13))
     strings = []
-    for i in per.importances_mean.argsort()[::-1]:
+    for i in per.importances_mean.argsorgitt()[::-1]:
         print(
             f"{colnames[i]:<8}"
             f"{per.importances_mean[i]:.3f}"
